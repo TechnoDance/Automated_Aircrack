@@ -12,7 +12,7 @@ ifconfig
 sleep 5
 echo "in 10 secconds we will find a target and input will be needed to find the target"
 sleep 10
-xterm -hold -e sudo "airodump-ng wlan1mon"
+xterm -hold -e sudo "sudo airodump-ng wlan1mon"
 echo Enter bssid of target
 read bid
 echo $bid
