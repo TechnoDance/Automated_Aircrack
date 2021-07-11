@@ -11,7 +11,6 @@ read mon
 echo "We will now use $mon"
 sleep 2
 airmon-ng start $interface
-airmon-ng check kill
 sleep 1
 xterm -hold -e "airodump-ng wlan1mon"
 echo Enter BSSID Of Target
